@@ -1,0 +1,269 @@
+---
+title: "Ramen Ranking"
+author: "affandry taufik"
+date: "2023-02-06"
+output:
+  html_document:
+    theme: flatly
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: true
+    df_print: paged
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+noodle <- read.csv("Datainput/ramen-lists.csv")
+str(noodle)
+```
+```{r}
+noodle$Review.. <- as.integer(noodle$Review..)
+noodle$Brand <- as.factor(noodle$Brand)
+noodle$Variety <- as.factor(noodle$Variety)
+noodle$Country <- as.factor(noodle$Country)
+noodle$Stars <- as.factor(noodle$Stars)
+noodle$Top.Ten <- as.factor(noodle$Top.Ten)
+noodle$Style <- as.factor(noodle$Style)
+
+str(noodle)
+```
+```{r}
+noodle$Stars <- as.numeric(as.character(noodle$Stars))
+noodle <- noodle[-c(33,123,994),]
+str(noodle)
+```
+
+```{r}
+levels(noodle$Country)
+```
+
+```{r}
+noodle$Sub.Region[noodle$Country=="Australia"]<-"Australia"
+noodle$Sub.Region[noodle$Country=="Bangladesh"]<-"South Asia"
+noodle$Sub.Region[noodle$Country=="Brazil"]<-"South America"
+noodle$Sub.Region[noodle$Country=="Cambodia"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="Canada"]<-"North America"
+noodle$Sub.Region[noodle$Country=="China"]<-"East Asia"
+noodle$Sub.Region[noodle$Country=="Colombia"]<-"South America"
+noodle$Sub.Region[noodle$Country=="Dubai"]<-"Middle East"
+noodle$Sub.Region[noodle$Country=="Estonia"]<-"North Europe"
+noodle$Sub.Region[noodle$Country=="Fiji"]<-"Oceania"
+noodle$Sub.Region[noodle$Country=="Finland"]<-"North Europe"
+noodle$Sub.Region[noodle$Country=="Germany"]<-"West Europe"
+noodle$Sub.Region[noodle$Country=="Ghana"]<-"West Africa"
+noodle$Sub.Region[noodle$Country=="Holland"]<-"West Europe"
+noodle$Sub.Region[noodle$Country=="Hong Kong"]<-"East Asia"
+noodle$Sub.Region[noodle$Country=="Hungary"]<-"Central Europe"
+noodle$Sub.Region[noodle$Country=="India"]<-"South Asia"
+noodle$Sub.Region[noodle$Country=="Indonesia"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="Japan"]<-"East Asia"
+noodle$Sub.Region[noodle$Country=="Malaysia"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="Mexico"]<-"North America"
+noodle$Sub.Region[noodle$Country=="Myanmar"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="Nepal"]<-"South Asia"
+noodle$Sub.Region[noodle$Country=="Netherlands"]<-"West Europe"
+noodle$Sub.Region[noodle$Country=="Nigeria"]<-"West Africa"
+noodle$Sub.Region[noodle$Country=="Pakistan"]<-"South Asia"
+noodle$Sub.Region[noodle$Country=="Philippines"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="Poland"]<-"Central Europe"
+noodle$Sub.Region[noodle$Country=="Sarawak"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="Singapore"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="South Korea"]<-"East Asia"
+noodle$Sub.Region[noodle$Country=="Sweden"]<-"North Europe"
+noodle$Sub.Region[noodle$Country=="Taiwan"]<-"East Asia"
+noodle$Sub.Region[noodle$Country=="Thailand"]<-"Southeast Asia"
+noodle$Sub.Region[noodle$Country=="UK"]<-"West Europe"
+noodle$Sub.Region[noodle$Country=="United States"]<-"North America"
+noodle$Sub.Region[noodle$Country=="USA"]<-"North America"
+noodle$Sub.Region[noodle$Country=="Vietnam"]<-"Southeast Asia"
+
+noodle$Sub.Region <- as.factor(noodle$Sub.Region)
+levels(noodle$Sub.Region)
+```
+
+```{r}
+noodle$Region[noodle$Sub.Region=="Australia"]<-"Australia/Oceania"
+noodle$Region[noodle$Sub.Region=="Central Europe"]<-"Europe"
+noodle$Region[noodle$Sub.Region=="East Asia"]<-"Asia"
+noodle$Region[noodle$Sub.Region=="Middle East"]<-"Asia"
+noodle$Region[noodle$Sub.Region=="North America"]<-"America"
+noodle$Region[noodle$Sub.Region=="North Europe"]<-"Europe"
+noodle$Region[noodle$Sub.Region=="Oceania"]<-"Australia/Oceania"
+noodle$Region[noodle$Sub.Region=="South America"]<-"America"
+noodle$Region[noodle$Sub.Region=="South Asia"]<-"Asia"
+noodle$Region[noodle$Sub.Region=="Southeast Asia"]<-"Asia"
+noodle$Region[noodle$Sub.Region=="West Africa"]<-"Africa"
+noodle$Region[noodle$Sub.Region=="West Europe"]<-"Europe"
+
+noodle$Region <- as.factor(noodle$Region)
+levels(noodle$Region)
+```
+
+```{r}
+str(noodle)
+```
+
+```{r}
+nrow(noodle)
+```
+
+```{r}
+summary(noodle)
+```
+there are 2577 variant instant noodle which distributed in 38 different countries in 5 continents. Based on the summary, we can find that Japan has the most variant of instant noodles in the world and followed by USA and South Korea. Since instant noodles founded in Asia, it’s not astonishing to see that at least 2011 different kinds of instant noodles can be found in all around Asia.
+
+```{r}
+graphics::pie(xtabs(~ Region, noodle))
+```
+
+Based on the pie chart above, we can see clearly that most variant of instant noodles can be found in Asia, with America and Europe following behind.
+
+## The Most Recognizable Brand
+
+Based on the data summary, Nissin alone has 381 different products, which makes them the most recognizable instant noodles brand around the world. Nongshim from South Korea and Maruchan from United states can’t be leave aside as the second and the third brands which have more instant noodles variant.
+
+```{r}
+nissin <- as.data.frame(sort(prop.table(table(droplevels(noodle[noodle$Brand == "Nissin","Country"]))),decreasing = T))
+names(nissin)[1] <- paste("Country")
+nissin
+```
+
+All Nissin’s 381 different products are distributed in 14 different countries, with around 70% of the products centered around Japan, USA and Hong Kong.
+
+## The Packaging of Instant Noodles
+```{r}
+graphics::pie(xtabs(~ Style, noodle))
+```
+
+```{r}
+xtabs(~ Style + Region, noodle)
+```
+We can find several type of packaging for instant noodles, but the most common one is the “pack” style, followed by bowl and cup.
+
+## What Do Customers Think About The Instant Noodles?
+
+There can be a lot of instant noodle in the market, but how do we know whether it’s good or not? The easiest way to find out each instant noodle tastiness is by finding reviews and ratings from other customers.
+
+```{r}
+africa.mean <- (mean(noodle$Stars[noodle$Region == "Africa"]))
+america.mean <- (mean(noodle$Stars[noodle$Region == "America"]))
+asia.mean <- (mean(noodle$Stars[noodle$Region == "Asia"]))
+australia.mean <- (mean(noodle$Stars[noodle$Region == "Australia/Oceania"]))
+europe.mean <- (mean(noodle$Stars[noodle$Region == "Europe"]))
+
+region.mean <- cbind(Region=c("Africa","America","Asia","Australia/Oceania","Europe"))
+region.mean <- cbind(region.mean,as.data.frame(c(africa.mean,america.mean,asia.mean,australia.mean,europe.mean)))
+
+names(region.mean)[2] <- paste("Mean")
+region.mean
+```
+
+```{r}
+graphics::barplot(xtabs(Mean ~ Region, region.mean))
+```
+
+Based on data, most of instant noodles in Asia can be categorized as delicious, because the average of the instant noodle rating in Asia is 3.75. We can say that you can go wrong when you pick any instant noodle in Asia. On the other hand, you need to do more research when you want to buy instant noodle in Africa, since the average rating for its’ instant noodles is 2.83.
+
+```{r}
+noodle$Stars.Range <-c("0-1", "1-2", "2-3", "3-4", "4-5")[findInterval(as.numeric(as.character(noodle$Stars)) , c(0, 1, 2, 3, 4, Inf) )]
+xtabs(~ Stars.Range + Region, noodle)
+```
+
+```{r}
+graphics::barplot(xtabs(~ Stars.Range + Region, noodle))
+```
+
+```{r}
+table(droplevels(noodle$Country),noodle$Stars.Range)
+```
+
+## Asia - The Heaven of Instant Noodle
+
+```{r}
+asia <- subset(noodle, Region == "Asia")
+str(asia)
+```
+
+```{r}
+summary(asia)
+```
+Asia as the origin of instant noodles can be said as the heaven of instant noodles. There are at least 2011 different varieties of instant noodles, which more half of those variants can be found in East Asia. Furthermore, we can also see that Southeast Asia also not fall behind from East Asia. It has at least 758 variants of instant noodles, which are higher that the sum of instant noodles variants in 4 other regions. For instant noodles in Asia, in terms of tastiness, with a strong 3.75 stars rating on average, you hardly can go wrong when you choose instant noodles in Asia.
+
+```{r}
+noodle.sub.asia <- as.data.frame(sort(table(droplevels(asia$Sub.Region)),decreasing = T))
+names(noodle.sub.asia)[1]<-paste("Sub.Region")
+noodle.sub.asia
+```
+
+```{r}
+graphics::barplot(xtabs(Freq ~ Sub.Region, noodle.sub.asia))
+```
+
+```{r}
+noodle.asia <- as.data.frame(sort(table(droplevels(asia$Country)),decreasing = T))
+names(noodle.asia)[1]<-paste("Country")
+noodle.asia
+```
+
+```{r}
+graphics::barplot(xtabs(Freq ~ Country, noodle.asia))
+```
+
+## What About Instant Noodle in Indonesia?
+Instant noodle firstly introduced in Indonesia in 1968 with the brand Supermie. Nowadays, instant noodles become a comfort food, which is a significant part of the Indonesian diet.
+
+```{r}
+ina <- subset(noodle, Country == "Indonesia")
+ina <- ina[,-c(5)]
+names(ina)
+```
+```{r}
+str(ina)
+```
+
+```{r}
+summary(ina)
+```
+
+```{r}
+nrow(ina)
+```
+At least, there are 126 variant of instant noodles which you can find in Indonesia, which most of them are Indomie. We can say that most of the instant noodles in Indonesia are delicious, since the average star rating for instant noodles in Indonesia is 4.06. It’s even higher that the average star rating for instant noodles in awhole Asia.
+
+```{r}
+noodle.ina <- as.data.frame(sort(table(ina$Stars.Range), decreasing = T))
+noodle.ina
+```
+
+```{r}
+graphics::barplot(xtabs(Freq ~ Var1,noodle.ina))
+```
+
+```{r}
+noodle.ina2 <- as.data.frame(sort(table(droplevels(ina$Brand)), decreasing = T))
+noodle.ina2
+```
+
+```{r}
+table(droplevels(ina$Brand),ina$Stars.Range)
+```
+
+```{r}
+prop.table(table(droplevels(ina$Brand),ina$Stars.Range== "4-5"))
+```
+
+```{r}
+graphics::barplot(table(ina$Stars.Range,droplevels(ina$Brand)))
+```
+
+Out of 82 variants of instant noodles in Indonesia which rated between 4 and 5, 28.57% of them is accounted for Indomie’s instant noodles. So, we can say that Indomie is the most loved instant noodles brand in Indonesia, which followed by Mie Sedaap and ABC who are tied for the second most loved.
+
+## Conclusion
+Now, what do I know about instant noodle?
+I know that it was founded by Momofuku Ando of Nissin Foods under the brand name Chikin Ramen in Japan on 25 August 1958 Sixty One years since its’ inception, Japan still the biggest producer of instant noodles, which has at least 352 variant of instant noodles. Nissin is the biggest noodle producers which has 381 different products that distributed in 14 countries. Asia is the heaven of instant noodles, because you can find 2011 out of 2577 instant noodles variant all across Asia. Most of instant noodles in Asia are the delicious one, because, on average, Asia’s instant noodles got 3.75 star for it’s taste. However, don’t forget about Indonesia, with average of 4.06 star rating, Indonesia became one of the Asian countries which has a higher star rating than the average of Asia’s star rating.
